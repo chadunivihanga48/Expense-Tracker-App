@@ -1,7 +1,8 @@
 import AuthLayout from "../../components/layouts/AuthLayout";
 import { useState } from 'react';
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import Input from "../../components/inputs/Input";
+
 
 
 const Login = () => {
@@ -12,7 +13,18 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async(e) => {
+    e.preventDefault();
 
+    if (!validateEmail(email)){
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    if(!password) {
+      setError("Please enter the password");
+      return;
+    }
+    setError("");
   }
   return (
     <AuthLayout>
@@ -38,14 +50,23 @@ const Login = () => {
           type = "password"
           />
 
-          {error && <p className = "">{error}</p>}
+          {error && <p className = "text-red-500 text-xs pb-2.5">{error}</p>}
 
-          <button type = "submit" className = "">
+          <button type = "submit" className = "btn-primary">
             Login
           </button>
+
+          <p className = "text-[13px] text-slate-800 mt-3">
+            Don't have an Account? {""}
+            <Link className = "font-medium text-primary underline" to="/signup">
+            SignUp
+            </Link>
+            
+          </p>
         </form>
         </div>
     </AuthLayout>
+    
   )
 }
 
