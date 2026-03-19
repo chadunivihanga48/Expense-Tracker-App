@@ -3,6 +3,7 @@ import AuthLayout from "../../components/layouts/AuthLayout";
 import { useState } from 'react';
 import {Link, useNavigate} from "react-router-dom";
 import Input from "../../components/inputs/Input";
+import {validateEmail} from "../../utils/helper";
 import ProfilePhotoSelector from "../../components/inputs/ProfilePhotoSelector";
 
 const SignUp = () => {
@@ -24,7 +25,7 @@ const SignUp = () => {
       setError("Please enter your full name");
       return;
     }
-    if(!validEmail) {
+    if(!validateEmail) {
       setError("Please enter a valid email address.");
       return;
     }

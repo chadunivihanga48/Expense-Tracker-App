@@ -2,7 +2,7 @@ import AuthLayout from "../../components/layouts/AuthLayout";
 import { useState } from 'react';
 import {Link, useNavigate} from "react-router-dom";
 import Input from "../../components/inputs/Input";
-
+import {validateEmail} from "../../utils/helper";
 
 
 const Login = () => {
@@ -15,7 +15,7 @@ const Login = () => {
   const handleLogin = async(e) => {
     e.preventDefault();
 
-    if (!validEmail(email)){
+    if (!validateEmail(email)){
       setError("Please enter a valid email address.");
       return;
     }
@@ -53,7 +53,7 @@ const Login = () => {
           {error && <p className = "text-red-500 text-xs pb-2.5">{error}</p>}
 
           <button type = "submit" className = "btn-primary">
-            Login
+            LOGIN
           </button>
 
           <p className = "text-[13px] text-slate-800 mt-3">
