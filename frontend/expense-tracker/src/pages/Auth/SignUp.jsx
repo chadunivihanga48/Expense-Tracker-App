@@ -1,4 +1,5 @@
 import React from 'react'
+import axios from "axios";
 import AuthLayout from "../../components/layouts/AuthLayout";
 import { useState } from 'react';
 import {Link, useNavigate} from "react-router-dom";
@@ -25,7 +26,7 @@ const SignUp = () => {
       setError("Please enter your full name");
       return;
     }
-    if(!validateEmail) {
+    if(!validateEmail(email)) {
       setError("Please enter a valid email address.");
       return;
     }
@@ -34,7 +35,23 @@ const SignUp = () => {
       return;
     }
     setError("");
-  }
+
+    try{
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/v1/auth/register",
+        {
+          fullName,
+          email,
+          password,
+        }
+      );
+      console.log("SUCCESS:", response.data);
+      navigate("/login");
+    }catch(error){
+      console.error(error);
+      setError(error.response?.data?.message || "Something went wrong");
+    }
+  };
   return (
     <AuthLayout>
       <div className = "lg:w-[100%] h-auto md:h-full mt-10 md:mt-0 flex flex-col justify-center">

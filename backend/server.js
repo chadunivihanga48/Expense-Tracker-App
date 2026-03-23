@@ -11,13 +11,18 @@ app.use(
     cors({
         origin: process.env.CLIENT_URL || "*",
         methods: ["GET", "POST", "PUT", "DELETE"],
-        allowedHeaders: ["Conent-Type", "Authorization"],
+        allowedHeaders: ["Content-Type", "Authorization"],
     })
 );
 
 app.use(express.json());
 
 connectDB();
+
+app.use((req, res, next) => {
+  console.log("Incoming:", req.method, req.url);
+  next();
+});
 
 app.use("/api/v1/auth", authRoutes);
 

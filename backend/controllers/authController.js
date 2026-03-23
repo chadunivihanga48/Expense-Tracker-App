@@ -3,10 +3,12 @@ const jwt = require("jsonwebtoken");
 
 const generateToken = (id) => {
     return jwt.sign({id}, process.env.JWT_SECRET, {expiresIn : "1h"});
-}
+};
 
 exports.registerUser = async(req, res) => {
-    const { fullName, email, password, profileImageUrl } = req.body;
+    console.log("BODY:", req.body);
+    
+    const { fullName, email, password, profileImageUrl } = req.body || {};
 
     if(!fullName || !email || !password) {
         return res.status(400).json({message: "All fields are required"});
