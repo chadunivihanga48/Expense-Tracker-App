@@ -1,13 +1,13 @@
 const User = require("../models/User");
-const Income = require("../models/Income");
+const Expense = require("../models/Expense");
 const xlsx = require('xlsx');
 
-exports.addIncome = async (req, res) => {
+exports.addExpense = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { icon, source, amount, date } = req.body;
+        const { icon, category, amount, date } = req.body;
 
-        if (!source || !amount || !date) {
+        if (!category || !amount || !date) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
@@ -19,65 +19,65 @@ exports.addIncome = async (req, res) => {
             return res.status(400).json({ message: `Invalid date format. Received: '${date}'. Expected format: YYYY-MM-DD or ISO 8601.` });
         }
 
-        const newIncome = new Income({
+        const newExpense = new Expense({
             userId,
             icon,
-            source,
+            category,
             amount,
             date: parsedDate
         });
 
-        await newIncome.save();
-        res.status(200).json(newIncome);
+        await newExpense.save();
+        res.status(200).json(newExpense);
     } catch (error) {
-        console.error("Error adding income:", error);
+        console.error("Error adding expense:", error);
         res.status(500).json({ message: "Server Error", error: error.message });
     }
 }
 
-exports.getAllIncome = async (req, res) => {
+exports.getAllExpense = async (req, res) => {
     try {
         const userId = req.user.id;
-        const income = await Income.find({ userId }).sort({ date: -1 });
-        res.json(income);
+        const expense = await Expense.find({ userId }).sort({ date: -1 });
+        res.json(expense);
     } catch (error) {
         res.status(500).json({ message: "Server Error" });
     }
 }
 
-exports.deleteIncome = async (req, res) => {
+exports.deleteExpense = async (req, res) => {
     try {
         const userId = req.user.id;
-        const income = await Income.findOneAndDelete({ _id: req.params.id, userId });
+        const expense = await Expense.findOneAndDelete({ _id: req.params.id, userId });
 
-        if (!income) {
-            return res.status(404).json({ message: "Income not found or unauthorized." });
+        if (!expense) {
+            return res.status(404).json({ message: "Expense not found or unauthorized." });
         }
 
-        res.json({ message: "Income deleted successfully." });
+        res.json({ message: "Expense deleted successfully." });
     } catch (error) {
-        console.error("Error deleting income:", error);
+        console.error("Error deleting expense:", error);
         res.status(500).json({ message: "Server Error." });
     }
 };
 
-exports.downloadIncomeExcel = async (req, res) => {
+exports.downloadExpenseExcel = async (req, res) => {
     try {
         const userId = req.user.id;
-        const income = await Income.find({ userId }).sort({ date: -1 });
+        const expense = await Expense.find({ userId }).sort({ date: -1 });
 
-        const data = income.map((item) => ({
-            Source: item.source,
+        const data = expense.map((item) => ({
+            Category: item.category,
             Amount: item.amount,
             Date: item.date ? item.date.toISOString().split('T')[0] : "N/A",
         }));
 
         const wb = xlsx.utils.book_new();
         const ws = xlsx.utils.json_to_sheet(data);
-        xlsx.utils.book_append_sheet(wb, ws, "Income");
+        xlsx.utils.book_append_sheet(wb, ws, "Expense");
 
         // Write the file to the project root (as seen in your reference video)
-        const filePath = 'income_details.xlsx';
+        const filePath = 'expense_details.xlsx';
         xlsx.writeFile(wb, filePath);
 
         // Send the file for download
